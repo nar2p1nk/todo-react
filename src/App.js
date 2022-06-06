@@ -4,7 +4,27 @@ import './App.css';
 
 function App() {
 
+  const [checkedTodo,setCheckedTodo] = useState([])
   const [todo,setTodo] = useState([])
+
+  const handleCheckedTodo = (e) =>{
+    if(e.target.checked === true){
+      const listTodo = [...checkedTodo,e.target.value]
+      setCheckedTodo(listTodo)
+      console.log(checkedTodo,e.target.value)
+    }
+    if(e.target.checked === false){
+      const newTodo = checkedTodo;
+      const id = newTodo.indexOf(e.target.value)
+      newTodo.splice(id,1)
+      setCheckedTodo(newTodo);
+      console.log(checkedTodo,'deletion')
+    }
+  }
+  const postCheckedTodo = () =>{
+    console.log(checkedTodo)
+
+  }
 
   useEffect(()=>{
     axios.get('http://localhost:8000/todo/').then((response)=>{
@@ -16,8 +36,8 @@ function App() {
     <div className="App">
       <h1 className="title">Todo-app</h1>
       <form >
-        <input type="text" placeholder />
-        <button>Create todo</button>
+        <input className='inputTodo' type="text" placeholder='enter todo' />
+        <button className='postTodo'>Create todo</button>
       </form>
       <div className='uncomplete'>
       <ul className="todoList">
@@ -26,9 +46,17 @@ function App() {
             return(null);
           }
             return(
-              <li id={i.todoId} key={i.todoId}>{i.todo}</li>
+              <li id={i.todoId} key={i.todoId}>
+                <p>
+                  <label>{i.todo}</label>
+                  <input type='checkbox'
+                  value={i.todoId} onClick={handleCheckedTodo}/>
+                </p>
+              </li>
             )
         })}
+        <button type='button' className="check" onClick={postCheckedTodo}>
+        complete checked tasks</button>
       </ul>
       </div>
       <div className='complete'>
@@ -40,9 +68,17 @@ function App() {
             return(null);
           }
             return(
-              <li id={i.todoId} key={i.todoId}>{i.todo}</li>
+              <li id={i.todoId} key={i.todoId}>
+                <p>
+                  <label>{i.todo}</label>
+                  <input type='checkbox'
+                  value={i.todoId} onClick={handleCheckedTodo}/>
+                </p>
+              </li>
             )
         })}
+        <button className='check' onClick={postCheckedTodo}>
+        Delete tasks</button>
       </ul>
       </div>
     </div>
