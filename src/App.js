@@ -4,26 +4,47 @@ import './App.css';
 
 function App() {
 
+  const [newTodo,setNewTodo] = useState('')
   const [checkedTodo,setCheckedTodo] = useState([])
+  const [deleteTodo, setDeleteTodo] = useState([])
   const [todo,setTodo] = useState([])
 
-  const handleCheckedTodo = (e) =>{
+  const onChange = (e,setUseState)=>{
+    setUseState(e.target.value)
+  }
+
+  const createTodo = () =>{
+    console.log(newTodo)
+    axios.post('http://localhost:8000/todo/post',{
+      todo:newTodo
+    },)
+      .then((response)=>{
+        setTodo(response.data)
+        console.log(response.data)
+      })
+      .catch((err)=>console.log(err))
+  }
+
+  const handleCheckedTodo = (e,setUsestate,usestate) =>{
     if(e.target.checked === true){
-      const listTodo = [...checkedTodo,e.target.value]
-      setCheckedTodo(listTodo)
-      console.log(checkedTodo,e.target.value)
+      const listTodo = [...usestate,e.target.value]
+      setUsestate(listTodo)
+      console.log(usestate,e.target.value,'checking')
     }
     if(e.target.checked === false){
-      const newTodo = checkedTodo;
+      const newTodo = usestate;
       const id = newTodo.indexOf(e.target.value)
       newTodo.splice(id,1)
-      setCheckedTodo(newTodo);
-      console.log(checkedTodo,'deletion')
+      setUsestate(newTodo);
+      console.log(usestate,'unchecking')
     }
   }
   const postCheckedTodo = () =>{
     console.log(checkedTodo)
 
+  }
+  const postDeleteTodo = () =>{
+    console.log(deleteTodo)
   }
 
   useEffect(()=>{
@@ -35,9 +56,10 @@ function App() {
   return (
     <div className="App">
       <h1 className="title">Todo-app</h1>
-      <form >
-        <input className='inputTodo' type="text" placeholder='enter todo' />
-        <button className='postTodo'>Create todo</button>
+      <form onSubmit={e=>{e.preventDefault()}}>
+        <input className='inputTodo' type="text" placeholder='enter todo'
+          onChange={e=>onChange(e,setNewTodo)} />
+        <button className='postTodo' onClick={createTodo}>Create todo</button>
       </form>
       <div className='uncomplete'>
       <ul className="todoList">
@@ -50,7 +72,8 @@ function App() {
                 <p>
                   <label>{i.todo}</label>
                   <input type='checkbox'
-                  value={i.todoId} onClick={handleCheckedTodo}/>
+                    value={i.todoId} onClick={(e) =>
+                  handleCheckedTodo(e,setCheckedTodo,checkedTodo)}/>
                 </p>
               </li>
             )
@@ -72,12 +95,12 @@ function App() {
                 <p>
                   <label>{i.todo}</label>
                   <input type='checkbox'
-                  value={i.todoId} onClick={handleCheckedTodo}/>
+                    value={i.todoId} onClick={(e)=>handleCheckedTodo(e,setDeleteTodo,deleteTodo)}/>
                 </p>
               </li>
             )
         })}
-        <button className='check' onClick={postCheckedTodo}>
+        <button className='check' onClick={postDeleteTodo}>
         Delete tasks</button>
       </ul>
       </div>
