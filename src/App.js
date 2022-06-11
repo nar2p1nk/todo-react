@@ -31,7 +31,10 @@ function App() {
     axios.post('http://localhost:8000/todo/complete',{
       list:todoToComplete
     })
-      .then((res)=>{console.log(res.data);setTodo(res.data)})
+      .then((res)=>{
+        setTodo(res.data);
+        setTodoToComplete([]);
+      })
       .catch((err)=> console.log(err))
   }
 
@@ -51,6 +54,11 @@ function App() {
   }
   const postDeleteTodo = () =>{
     console.log(deleteTodo)
+    axios.post('http://localhost:8000/todo/delete',{
+      list:deleteTodo
+    })
+      .then((res)=>{setTodo(res.data);setDeleteTodo([])})
+      .catch((err)=>console.log(err))
   }
 
   useEffect(()=>{
